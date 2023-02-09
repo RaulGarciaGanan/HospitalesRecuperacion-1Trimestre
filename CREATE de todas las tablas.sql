@@ -23,6 +23,15 @@ CREATE TABLE `medico` (
   PRIMARY KEY (`idmedico`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `hospital` (
+  `idhospital` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(45) NOT NULL,
+  `direccion` varchar(45) NOT NULL,
+  `telefono` int NOT NULL,
+  `fechaApertura` date NOT NULL,
+  PRIMARY KEY (`idhospital`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `consulta` (
   `idconsulta` int NOT NULL AUTO_INCREMENT,
   `sala` int NOT NULL,
