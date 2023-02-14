@@ -7,10 +7,11 @@ import java.sql.SQLException;
 public class ConexionBBDDMYSQL {
 	Connection conexion = null;
 	
-	public Connection conectorBBDD() {	    
+	public Connection conectorMySQL() {	    
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/ejemplo","root","root");
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost/recuperacionad","root","root");
+            System.out.println("Connection to MySQL has been established.");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
