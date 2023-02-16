@@ -3,6 +3,9 @@ package conexiones;
 import clases.*;
 
 import java.sql.*;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GestionesMySQL {
@@ -53,16 +56,39 @@ public class GestionesMySQL {
 
 	}
 
-	private void listadoPacientes() {
+	public void listadoPacientes() throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
+
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = false");
+		while (miResultSet.next()) {
+			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(2)
+					+ ", apellidos: " + miResultSet.getString(3) + ", direccion: " + miResultSet.getString(4)
+					+ ", profesion: " + miResultSet.getString(5) + ", edad: " + miResultSet.getString(6));
+		}
 
 	}
 
-	private void listadoMedicos() {
+	private void listadoMedicos() throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
 
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
+		while (miResultSet.next()) {
+			System.out.println("id: " + miResultSet.getInt(1) + ", numColegiado: " + miResultSet.getString(2)
+					+ ", nombre: " + miResultSet.getString(3) + ", apellidos: " + miResultSet.getString(4)
+					+ ", fecha Nacimiento: " + miResultSet.getString(5) + ", fecha Contratacion: " + miResultSet.getString(6)
+					+", especialidad: " + miResultSet.getString(7));
+		}
 	}
 
-	private void listadoConsultas() {
+	private void listadoConsultas() throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
 
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where baja = false");
+		while (miResultSet.next()) {
+			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(2)
+					+ ", apellidos: " + miResultSet.getString(3) + ", direccion: " + miResultSet.getString(4)
+					+ ", profesion: " + miResultSet.getString(5) + ", edad: " + miResultSet.getString(6));
+		}
 	}
 
 	private void crudPacientes() throws SQLException {
@@ -84,7 +110,7 @@ public class GestionesMySQL {
 				eliminarPaciente();
 				break;
 			case 4:
-				System.out.println("4");
+				System.out.println("Agur");
 				break;
 			default:
 				break;
@@ -97,7 +123,7 @@ public class GestionesMySQL {
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", profesion = "";
 		int edad = 0;
-		boolean baja = false, correcto = true;
+		boolean baja = false, correcto;
 		System.out.println("Introduzca el DNI del paciente");
 		dni = in.nextLine();
 		System.out.println("Introduce el nombre del paciente");
@@ -132,15 +158,79 @@ public class GestionesMySQL {
 
 	}
 
-	private void modificarPaciente() {
+	private void modificarPaciente() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		String dni = "", nombre = "", apellidos = "", direccion = "", profesion = "";
+		int edad = 0, menu = 0;
+		boolean correcto;
+		do {
+			try {
+				menu = 0;
+				listadoPacientes();
+				System.out.println("Selecciona el id de un paciente:");
+				menu = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del paciente");
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Introduzca el DNI del paciente");
+		dni = in.nextLine();
+		System.out.println("Introduce el nombre del paciente");
+		nombre = in.nextLine();
+		System.out.println("Introduce los apellidos del paciente");
+		apellidos = in.nextLine();
+		System.out.println("Introduce la direccion del paciente");
+		direccion = in.nextLine();
+		do {
+			try {
+				edad = 0;
+				System.out.println("Introduce la edad del paciente");
+				edad = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("La edad debe ser en numeros");
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Introduce la profesion del paciente");
+		profesion = in.nextLine();
 
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("UPDATE paciente SET" + "`dni` = '" + dni + "'," + "`nombre` = '" + nombre + "',"
+				+ "`apellidos` = '" + apellidos + "'," + "`direccion` = '" + direccion + "'," + "`edad` = " + edad + ","
+				+ "`profesion` = '" + profesion + "' WHERE `idPaciente` = " + menu + ";");
+
+		miSentencia.execute(sql);
 	}
 
-	private void eliminarPaciente() {
+	private void eliminarPaciente() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		int menu = 0;
+		boolean correcto;
+		do {
+			try {
+				menu = 0;
+				listadoPacientes();
+				System.out.println("Selecciona el id de un paciente:");
+				menu = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del paciente");
+				correcto = false;
+			}
+		} while (!correcto);
 
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("UPDATE paciente SET baja=true WHERE `idPaciente` = " + menu + ";");
+
+		miSentencia.execute(sql);
 	}
 
-	private void crudMedicos() {
+	private void crudMedicos() throws SQLException {
 		Scanner in = new Scanner(System.in);
 		int menu;
 		do {
@@ -159,7 +249,7 @@ public class GestionesMySQL {
 				eliminarMedico();
 				break;
 			case 4:
-				System.out.println("4");
+				System.out.println("Agur");
 				break;
 			default:
 				break;
@@ -168,12 +258,72 @@ public class GestionesMySQL {
 
 	}
 
-	private void crearMedico() {
+	private void crearMedico() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		String dni = "", nombre = "", apellidos = "", direccion = "", especialidad = "", fecha = "";
+		Date fechaNaci = null, fechaContrata = null;
+		int numcolegiado = 0, edad = 0;
+		boolean baja = false, correcto;
+		do {
+			try {
+				numcolegiado = 0;
+				System.out.println("Introduce el numero de colegiado del medico:");
+				numcolegiado = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Introduce el dni del medico");
+		dni = in.nextLine();
+		System.out.println("Introduce el nombre del medico");
+		nombre = in.nextLine();
+		System.out.println("Introduce los apellidos del medico");
+		apellidos = in.nextLine();
+		do {
+			System.out.println("Introduce la fecha de nacimiento del medico (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaNaci = comprobarFecha(fecha);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha de contratacion del medico (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaContrata = comprobarFecha(fecha);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Introduce la especialidad del medico:");
+		especialidad = in.nextLine();
+
+		medico med = new medico(numcolegiado, dni, nombre, apellidos, fechaNaci, fechaContrata, especialidad, baja);
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format(
+				"INSERT INTO medico(numColegiado,dni,nombre,apellidos,fechaNaci,fechaContratacion,especialidad,baja) "
+						+ "VALUES(" + med.getNumColegiado() + ",'" + med.getDni() + "','" + med.getNombre() + "','"
+						+ med.getApellidos() + "','" + med.getFecahNaci() + "','" + med.getFechaContrata() + "','"
+						+ med.getEspecialidad() + "'," + med.isBaja() + ")");
+
+		miSentencia.execute(sql);
 
 	}
 
 	private void modificarMedico() {
-
+		Scanner in = new Scanner(System.in);
+		String dni = "", nombre = "", apellidos = "", direccion = "", especialidad = "", fecha = "";
+		Date fechaNaci = null, fechaContrata = null;
+		int numcolegiado = 0, edad = 0;
+		boolean baja = false, correcto;
 	}
 
 	private void eliminarMedico() {
@@ -217,6 +367,23 @@ public class GestionesMySQL {
 	}
 
 	private void eliminarConsulta() {
+
+	}
+
+	public Date comprobarFecha(String fecha) throws SQLException {
+		// String startDate="01-02-2013";
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		java.util.Date date = null;
+		try {
+			date = sdf1.parse(fecha);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Fecha mal introducida");
+
+		}
+		java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
+		System.out.println(sqlStartDate);
+		return sqlStartDate;
 
 	}
 

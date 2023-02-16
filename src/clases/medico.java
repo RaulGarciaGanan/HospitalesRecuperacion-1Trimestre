@@ -5,6 +5,7 @@ import java.sql.*;
 public class medico {
 	private int id;
 	private int numColegiado;
+	private String dni;
 	private String nombre;
 	private String apellidos;
 	private Date fecahNaci;
@@ -12,9 +13,11 @@ public class medico {
 	private String especialidad;
 	private boolean baja;
 
-	public medico(int numColegiado, String nombre, String apellidos, Date fecahNaci, Date fechaContrata,
+	public medico(int numColegiado, String dni, String nombre, String apellidos, Date fecahNaci, Date fechaContrata,
 			String especialidad, boolean baja) {
+		super();
 		this.numColegiado = numColegiado;
+		this.dni = dni;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.fecahNaci = fecahNaci;
@@ -37,6 +40,14 @@ public class medico {
 
 	public void setNumColegiado(int numColegiado) {
 		this.numColegiado = numColegiado;
+	}
+
+	public String getDni() {
+		return dni;
+	}
+
+	public void setDni(String dni) {
+		this.dni = dni;
 	}
 
 	public String getNombre() {
