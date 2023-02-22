@@ -11,10 +11,10 @@ public class consulta {
 	private int idPaciente;
 	private double coste;
 	private String analisisComplement;
-	private Boolean realiza;
+	private boolean realizada;
 
 	public consulta(int id, int sala, Date fecha, Time hora, int idMedico, int idPaciente, double coste,
-			String analisisComplement, Boolean raliza) {
+			String analisisComplement, boolean realizada) {
 		super();
 		this.id = id;
 		this.sala = sala;
@@ -24,7 +24,19 @@ public class consulta {
 		this.idPaciente = idPaciente;
 		this.coste = coste;
 		this.analisisComplement = analisisComplement;
-		this.realiza = raliza;
+		this.realizada = realizada;
+	}
+
+	public consulta(int sala, Date fecha, Time hora, int idMedico, int idPaciente, double coste,
+			String analisisComplement) {
+		this.sala = sala;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.idMedico = idMedico;
+		this.idPaciente = idPaciente;
+		this.coste = coste;
+		this.analisisComplement = analisisComplement;
+
 	}
 
 	public int getId() {
@@ -91,12 +103,12 @@ public class consulta {
 		this.analisisComplement = analisisComplement;
 	}
 
-	public Boolean getRaliza() {
-		return realiza;
+	public boolean isRealizada() {
+		return realizada;
 	}
 
-	public void setRaliza(Boolean raliza) {
-		this.realiza = raliza;
+	public void setRealizada(boolean realizada) {
+		this.realizada = realizada;
 	}
 
 }

@@ -13,6 +13,20 @@ public class medico {
 	private String especialidad;
 	private boolean baja;
 
+	public medico(int id, int numColegiado, String dni, String nombre, String apellidos, Date fecahNaci,
+			Date fechaContrata, String especialidad, boolean baja) {
+		super();
+		this.id = id;
+		this.numColegiado = numColegiado;
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.fecahNaci = fecahNaci;
+		this.fechaContrata = fechaContrata;
+		this.especialidad = especialidad;
+		this.baja = baja;
+	}
+
 	public medico(int numColegiado, String dni, String nombre, String apellidos, Date fecahNaci, Date fechaContrata,
 			String especialidad, boolean baja) {
 		super();

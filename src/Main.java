@@ -1,21 +1,27 @@
 import java.sql.SQLException;
 import java.util.*;
 
+import clases.consulta;
+import clases.medico;
+import clases.paciente;
 import conexiones.*;
 
 public class Main {
 	static GestionesMySQL conexionMySQL;
 	static int menu;
+	
 
 	public static void main(String[] args) throws SQLException {
+		Scanner in = new Scanner(System.in);
+		
 		try {
 			conexionMySQL = new GestionesMySQL();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
-		Scanner in = new Scanner(System.in);
 		do {
 			menu = 0;
 			System.out.println("A que hospital se desa conectar:\n" + "1.Hospital MySQL\n" + "2.Hospital SQLite\n"

@@ -7,12 +7,22 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.*;
 
 public class GestionesMySQL {
 	Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+	public ArrayList<paciente> aPaciente;
+	public ArrayList<medico> aMedico;
+	public ArrayList<consulta> aConsulta;
 
 	public void menuPrincipal() throws SQLException {
 		Scanner in = new Scanner(System.in);
+		aPaciente = new ArrayList<paciente>();
+		aMedico = new ArrayList<medico>();
+		aConsulta = new ArrayList<consulta>();
+		guardarPacientes(aPaciente);
+		guardarMedicos(aMedico);
+		guardarConsultas(aConsulta);
 		int menu;
 		do {
 			menu = 0;
@@ -22,10 +32,10 @@ public class GestionesMySQL {
 			menu = in.nextInt();
 			switch (menu) {
 			case 1:
-				listadoPacientes();
+				listadoPacientesCompleto();
 				break;
 			case 2:
-				listadoMedicos();
+				listadoMedicosCompleto();
 				break;
 			case 3:
 				listadoConsultas();
@@ -56,7 +66,7 @@ public class GestionesMySQL {
 
 	}
 
-	public void listadoPacientes() throws SQLException {
+	private void listadoPacientesCompleto() throws SQLException {
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = false");
@@ -68,26 +78,46 @@ public class GestionesMySQL {
 
 	}
 
-	private void listadoMedicos() throws SQLException {
+	private void listadoPacientesReducido() throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
+
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = false");
+		while (miResultSet.next()) {
+			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(2));
+		}
+
+	}
+
+	private void listadoMedicosCompleto() throws SQLException {
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", numColegiado: " + miResultSet.getString(2)
 					+ ", nombre: " + miResultSet.getString(3) + ", apellidos: " + miResultSet.getString(4)
-					+ ", fecha Nacimiento: " + miResultSet.getString(5) + ", fecha Contratacion: " + miResultSet.getString(6)
-					+", especialidad: " + miResultSet.getString(7));
+					+ ", fecha Nacimiento: " + miResultSet.getString(5) + ", fecha Contratacion: "
+					+ miResultSet.getString(6) + ", especialidad: " + miResultSet.getString(7));
+		}
+	}
+
+	private void listadoMedicosReducido() throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
+
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
+		while (miResultSet.next()) {
+			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(3));
 		}
 	}
 
 	private void listadoConsultas() throws SQLException {
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where baja = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = false");
 		while (miResultSet.next()) {
-			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(2)
-					+ ", apellidos: " + miResultSet.getString(3) + ", direccion: " + miResultSet.getString(4)
-					+ ", profesion: " + miResultSet.getString(5) + ", edad: " + miResultSet.getString(6));
+			System.out.println("id: " + miResultSet.getInt(1) + ", sala: " + miResultSet.getInt(2) + ", fecha: "
+					+ miResultSet.getString(3) + ", hora: " + miResultSet.getString(4) + ", id Medico: "
+					+ miResultSet.getString(5) + ", id paciente: " + miResultSet.getString(6) + ", coste: "
+					+ miResultSet.getDouble(7) + ", analisis complementarios: " + miResultSet.getString(8));
 		}
 	}
 
@@ -166,10 +196,15 @@ public class GestionesMySQL {
 		do {
 			try {
 				menu = 0;
-				listadoPacientes();
+				listadoPacientesReducido();
 				System.out.println("Selecciona el id de un paciente:");
 				menu = Integer.parseInt(in.nextLine());
-				correcto = true;
+				if(comprobarIdPaciente(menu)==true) {
+					correcto = true;
+				} else {
+					System.out.println("Debe elegir un id que de el listado que se le muestra");
+					correcto=false;
+				}				
 			} catch (Exception e) {
 				System.out.println("Debe seleccionar el id numerico del paciente");
 				correcto = false;
@@ -199,7 +234,7 @@ public class GestionesMySQL {
 
 		Statement miSentencia = miConexion.createStatement();
 
-		String sql = String.format("UPDATE paciente SET" + "`dni` = '" + dni + "'," + "`nombre` = '" + nombre + "',"
+		String sql = String.format("UPDATE paciente SET `dni` = '" + dni + "'," + "`nombre` = '" + nombre + "',"
 				+ "`apellidos` = '" + apellidos + "'," + "`direccion` = '" + direccion + "'," + "`edad` = " + edad + ","
 				+ "`profesion` = '" + profesion + "' WHERE `idPaciente` = " + menu + ";");
 
@@ -213,10 +248,15 @@ public class GestionesMySQL {
 		do {
 			try {
 				menu = 0;
-				listadoPacientes();
+				listadoPacientesReducido();
 				System.out.println("Selecciona el id de un paciente:");
 				menu = Integer.parseInt(in.nextLine());
-				correcto = true;
+				if(comprobarIdPaciente(menu)==true) {
+					correcto = true;
+				} else {
+					System.out.println("Debe elegir un id que de el listado que se le muestra");
+					correcto=false;
+				}				
 			} catch (Exception e) {
 				System.out.println("Debe seleccionar el id numerico del paciente");
 				correcto = false;
@@ -318,19 +358,111 @@ public class GestionesMySQL {
 
 	}
 
-	private void modificarMedico() {
+	private void modificarMedico() throws SQLException {
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", especialidad = "", fecha = "";
 		Date fechaNaci = null, fechaContrata = null;
-		int numcolegiado = 0, edad = 0;
-		boolean baja = false, correcto;
+		int numcolegiado = 0, edad = 0, menu = 0;
+		boolean correcto;
+		do {
+			try {
+				menu = 0;
+				listadoMedicosReducido();
+				System.out.println("Selecciona el id de un medico:");
+				menu = Integer.parseInt(in.nextLine());
+				if(comprobarIdMedico(menu)==true) {
+					correcto = true;
+				} else {
+					System.out.println("Debe elegir un id que de el listado que se le muestra");
+					correcto=false;
+				}				
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del medico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			try {
+				numcolegiado = 0;
+				System.out.println("Introduce el numero de colegiado del medico:");
+				numcolegiado = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Introduce el dni del medico");
+		dni = in.nextLine();
+		System.out.println("Introduce el nombre del medico");
+		nombre = in.nextLine();
+		System.out.println("Introduce los apellidos del medico");
+		apellidos = in.nextLine();
+		do {
+			System.out.println("Introduce la fecha de nacimiento del medico (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaNaci = comprobarFecha(fecha);
+				System.out.println(fechaNaci);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha de contratacion del medico (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaContrata = comprobarFecha(fecha);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Introduce la especialidad del medico:");
+		especialidad = in.nextLine();
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("UPDATE medico SET numColegiado = " + numcolegiado + ",dni = '" + dni
+				+ "', nombre =  '" + nombre + "', " + "apellidos = '" + apellidos + "', fechaNaci = '" + fechaNaci
+				+ "', fechaContratacion ='" + fechaContrata + "'," + "especialidad = '" + especialidad
+				+ "' where idmedico = " + menu + "");
+
+		miSentencia.execute(sql);
 	}
 
-	private void eliminarMedico() {
+	private void eliminarMedico() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		int menu = 0;
+		boolean correcto;
+		do {
+			try {
+				menu = 0;
+				listadoMedicosReducido();
+				System.out.println("Selecciona el id de un medico:");
+				menu = Integer.parseInt(in.nextLine());
+				if(comprobarIdMedico(menu)==true) {
+					correcto = true;
+				} else {
+					System.out.println("Debe elegir un id que de el listado que se le muestra");
+					correcto=false;
+				}				
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del medico");
+				correcto = false;
+			}
+		} while (!correcto);
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("UPDATE medico SET baja=true WHERE `idmedico` = " + menu + ";");
+
+		miSentencia.execute(sql);
 
 	}
 
-	private void crudConsultas() {
+	private void crudConsultas() throws SQLException {
 		Scanner in = new Scanner(System.in);
 		int menu;
 		do {
@@ -349,7 +481,7 @@ public class GestionesMySQL {
 				eliminarConsulta();
 				break;
 			case 4:
-				System.out.println("4");
+				System.out.println("Agur");
 				break;
 			default:
 				break;
@@ -358,16 +490,238 @@ public class GestionesMySQL {
 
 	}
 
-	private void crearConsulta() {
+	private void crearConsulta() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		int sala = 0, idMedico = 0, idPaciente = 0, menu = 0;
+		Double coste = 0.0;
+		String analisis = "", fecha = "", hora = "";
+		Date fechaConsulta = null;
+		Time horaConsulta = null;
+		boolean correcto;
+		do {
+			try {
+				sala = 0;
+				System.out.println("Introduce la sala de la consulta:");
+				sala = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha en la que se atendera al paciente (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaConsulta = comprobarFecha(fecha);
+				System.out.println(fechaConsulta);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la hora en la realizara la consulta (con formato de 24h)");
+			hora = in.nextLine();
+			try {
+				horaConsulta = comprobarHora(hora);
+				System.out.println(horaConsulta);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+			/*
+			 * codigo posiblemente util en el futuro se relaciona con con comprobar hora if
+			 * (comprobarHora(hora) == false) {
+			 * System.out.println("Hora mal introducida, debe tener un formato de 24 horas"
+			 * ); correcto = false; } else { horaConsulta = Time.valueOf(hora); correcto =
+			 * true; }
+			 */
+		} while (!correcto);
+		do {
+			try {
+				idMedico = 0;
+				listadoMedicosReducido();
+				System.out.println("Selecciona el id de un medico:");
+				idMedico = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del medico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			try {
+				idPaciente = 0;
+				listadoPacientesReducido();
+				System.out.println("Selecciona el id del paciente:");
+				idPaciente = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del medico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			try {
+				coste = 0.0;
+				System.out.println("Introduce el coste de la consulta:");
+				coste = Double.parseDouble(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe ser numerico y tener decimales");
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Analisis complementarios para el paciente");
+		analisis = in.nextLine();
+
+		consulta cont = new consulta(sala, fechaConsulta, horaConsulta, idMedico, idPaciente, coste, analisis);
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format(
+				"INSERT INTO consulta (sala,fecha,hora,medicoInterviniente,paciente,coste,analisisComplementarios,realizada) VALUES ("
+						+ cont.getSala() + ",'" + cont.getFecha() + "','" + cont.getHora() + "'," + cont.getIdMedico()
+						+ "," + cont.getIdPaciente() + "," + cont.getCoste() + ",'" + cont.getAnalisisComplement()
+						+ "'," + cont.isRealizada() + ")");
+
+		miSentencia.execute(sql);
 
 	}
 
-	private void modificarConsulta() {
+	private void modificarConsulta() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		int sala = 0, idMedico = 0, idPaciente = 0, menu = 0;
+		Double coste = 0.0;
+		String analisis = "", fecha = "", hora = "";
+		Date fechaConsulta = null;
+		Time horaConsulta = null;
+		boolean correcto;
+		do {
+			try {
+				menu = 0;
+				listadoConsultas();
+				System.out.println("Selecciona el id de una consulta:");
+				menu = Integer.parseInt(in.nextLine());
+				if(comprobarIdConsulta(menu)==true) {
+					correcto = true;
+				} else {
+					System.out.println("Debe elegir un id que de el listado que se le muestra");
+					correcto=false;
+				}				
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico de la consulta");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			try {
+				sala = 0;
+				System.out.println("Introduce la sala de la consulta:");
+				sala = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha en la que se atendera al paciente (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaConsulta = comprobarFecha(fecha);
+				System.out.println(fechaConsulta);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la hora en la realizara la consulta (con formato de 24h)");
+			hora = in.nextLine();
+			try {
+				horaConsulta = comprobarHora(hora);
+				System.out.println(horaConsulta);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			try {
+				idMedico = 0;
+				listadoMedicosReducido();
+				System.out.println("Selecciona el id de un medico:");
+				idMedico = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del medico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			try {
+				idPaciente = 0;
+				listadoPacientesReducido();
+				System.out.println("Selecciona el id del paciente:");
+				idPaciente = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico del medico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			try {
+				coste = 0.0;
+				System.out.println("Introduce el coste de la consulta:");
+				coste = Double.parseDouble(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("Debe ser numerico y tener decimales");
+				correcto = false;
+			}
+		} while (!correcto);
+		System.out.println("Analisis complementarios para el paciente");
+		analisis = in.nextLine();
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("UPDATE consulta SET sala = " + sala + ", fecha = '" + fechaConsulta + "', hora =  '"
+				+ hora + "', " + "medicoInterviniente = " + idMedico + ", paciente = " + idPaciente + ", coste ="
+				+ coste + "," + "analisisComplementarios = '" + analisis + "' where idconsulta = " + menu + "");
+
+		miSentencia.execute(sql);
 
 	}
 
-	private void eliminarConsulta() {
+	private void eliminarConsulta() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		int menu = 0;
+		boolean correcto;
+		do {
+			try {
+				menu = 0;
+				listadoConsultas();
+				System.out.println("Selecciona el id de una consulta:");
+				menu = Integer.parseInt(in.nextLine());
+				if(comprobarIdConsulta(menu)==true) {
+					correcto = true;
+				} else {
+					System.out.println("Debe elegir un id que de el listado que se le muestra");
+					correcto=false;
+				}				
+			} catch (Exception e) {
+				System.out.println("Debe seleccionar el id numerico de la consulta");
+				correcto = false;
+			}
+		} while (!correcto);
+		Statement miSentencia = miConexion.createStatement();
 
+		String sql = String.format("UPDATE consulta SET realizada = true where idconsulta = " + menu + "");
+
+		miSentencia.execute(sql);
+		System.out.println();
 	}
 
 	public Date comprobarFecha(String fecha) throws SQLException {
@@ -382,9 +736,99 @@ public class GestionesMySQL {
 
 		}
 		java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
-		System.out.println(sqlStartDate);
 		return sqlStartDate;
 
+	}
+
+	public Time comprobarHora(String hora) {
+		SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+		java.util.Date time = null;
+		try {
+			time = sdf1.parse(hora);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Fecha mal introducida");
+
+		}
+		java.sql.Time sqlStartDate = new java.sql.Time(time.getTime());
+		return sqlStartDate;
+
+		/*
+		 * codigo viejo posiblemente util en el futuro // Regex to check valid time in
+		 * 24-hour format. String regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+		 * 
+		 * // Compile the ReGex Pattern p = Pattern.compile(regex);
+		 * 
+		 * // If the time is empty // return false if (time == null) { return false; }
+		 * 
+		 * // Pattern class contains matcher() method // to find matching between given
+		 * time // and regular expression. Matcher m = p.matcher(time);
+		 * 
+		 * // Return if the time // matched the ReGex return m.matches();
+		 */
+	}
+
+	public void guardarPacientes(ArrayList<paciente> aPaciente) throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
+
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = false");
+		while (miResultSet.next()) {
+			paciente p = new paciente(miResultSet.getInt(1), miResultSet.getString(2), miResultSet.getString(3),
+					miResultSet.getString(4), miResultSet.getString(5), miResultSet.getInt(6), miResultSet.getString(7),
+					miResultSet.getBoolean(8));
+			aPaciente.add(p);
+		}
+	}
+
+	public void guardarMedicos(ArrayList<medico> aMedicos) throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
+
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
+		while (miResultSet.next()) {
+			medico m = new medico(miResultSet.getInt(1), miResultSet.getInt(2), miResultSet.getString(3),
+					miResultSet.getString(4), miResultSet.getString(5), miResultSet.getDate(6), miResultSet.getDate(7),
+					miResultSet.getString(8), miResultSet.getBoolean(9));
+			aMedicos.add(m);
+		}
+	}
+
+	public void guardarConsultas(ArrayList<consulta> aConsultas) throws SQLException {
+		Statement miSentencia = miConexion.createStatement();
+
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = false");
+		while (miResultSet.next()) {
+			consulta c = new consulta(miResultSet.getInt(1), miResultSet.getInt(2), miResultSet.getDate(3),
+					miResultSet.getTime(4), miResultSet.getInt(5), miResultSet.getInt(6), miResultSet.getDouble(7),
+					miResultSet.getString(8), miResultSet.getBoolean(9));
+			aConsultas.add(c);
+		}
+	}
+
+	public boolean comprobarIdPaciente(Integer id) {
+		for (int i = 0; i < aPaciente.size(); i++) {
+			if (aPaciente.get(i).getId() == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean comprobarIdMedico(Integer id) {
+		for (int i = 0; i < aMedico.size(); i++) {
+			if (aMedico.get(i).getId() == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean comprobarIdConsulta(Integer id) {
+		for (int i = 0; i < aConsulta.size(); i++) {
+			if (aConsulta.get(i).getId() == id) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void datosHospital() {

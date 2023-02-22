@@ -10,7 +10,18 @@ public class paciente {
 	private String profesion;
 	private boolean baja;
 
-	
+	public paciente(int id, String dni, String nombre, String apellidos, String direccion, int edad, String profesion,
+			boolean baja) {
+		super();
+		this.id = id;
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.direccion = direccion;
+		this.edad = edad;
+		this.profesion = profesion;
+		this.baja = baja;
+	}
 
 	public paciente(String dni, String nombre, String apellidos, String direccion, int edad, String profesion,
 			boolean baja) {
@@ -24,12 +35,12 @@ public class paciente {
 		this.baja = baja;
 	}
 
-	public int getCodigo() {
+	public int getId() {
 		return id;
 	}
 
-	public void setCodigo(int codigo) {
-		this.id = codigo;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getDni() {
