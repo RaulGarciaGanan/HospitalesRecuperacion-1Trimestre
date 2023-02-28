@@ -42,11 +42,12 @@ CREATE TABLE `consulta` (
   `coste` double NOT NULL,
   `analisisComplementarios` varchar(45) NOT NULL,
   `realizada` tinyint NOT NULL,
+  `medicamentos` varchar(45) NOT NULL,
   PRIMARY KEY (`idconsulta`),
   KEY `medico_fk_Medico_idx` (`medicoInterviniente`),
   KEY `paciente_fk_Paciente_idx` (`paciente`),
   CONSTRAINT `medico_fk_Medico` FOREIGN KEY (`medicoInterviniente`) REFERENCES `medico` (`idmedico`) ON DELETE CASCADE,
   CONSTRAINT `paciente_fk_Paciente` FOREIGN KEY (`paciente`) REFERENCES `paciente` (`idPaciente`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 

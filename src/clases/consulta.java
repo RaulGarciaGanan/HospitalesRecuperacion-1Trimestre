@@ -9,12 +9,13 @@ public class consulta {
 	private Time hora;
 	private int idMedico;
 	private int idPaciente;
+	private String medicamentos;
 	private double coste;
 	private String analisisComplement;
 	private boolean realizada;
 
-	public consulta(int id, int sala, Date fecha, Time hora, int idMedico, int idPaciente, double coste,
-			String analisisComplement, boolean realizada) {
+	public consulta(int id, int sala, Date fecha, Time hora, int idMedico, int idPaciente, String medicamentos,
+			double coste, String analisisComplement, boolean realizada) {
 		super();
 		this.id = id;
 		this.sala = sala;
@@ -22,21 +23,23 @@ public class consulta {
 		this.hora = hora;
 		this.idMedico = idMedico;
 		this.idPaciente = idPaciente;
+		this.medicamentos = medicamentos;
 		this.coste = coste;
 		this.analisisComplement = analisisComplement;
 		this.realizada = realizada;
 	}
 
-	public consulta(int sala, Date fecha, Time hora, int idMedico, int idPaciente, double coste,
+	public consulta(int sala, Date fecha, Time hora, int idMedico, int idPaciente, String medicamentos, double coste,
 			String analisisComplement) {
+		super();
 		this.sala = sala;
 		this.fecha = fecha;
 		this.hora = hora;
 		this.idMedico = idMedico;
 		this.idPaciente = idPaciente;
+		this.medicamentos = medicamentos;
 		this.coste = coste;
 		this.analisisComplement = analisisComplement;
-
 	}
 
 	public int getId() {
@@ -85,6 +88,14 @@ public class consulta {
 
 	public void setIdPaciente(int idPaciente) {
 		this.idPaciente = idPaciente;
+	}
+
+	public String getMedicamentos() {
+		return medicamentos;
+	}
+
+	public void setMedicamentos(String medicamentos) {
+		this.medicamentos = medicamentos;
 	}
 
 	public double getCoste() {

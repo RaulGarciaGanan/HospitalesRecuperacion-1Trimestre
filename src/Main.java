@@ -9,24 +9,31 @@ import conexiones.*;
 public class Main {
 	static GestionesMySQL conexionMySQL;
 	static int menu;
-	
 
 	public static void main(String[] args) throws SQLException {
 		Scanner in = new Scanner(System.in);
-		
+		boolean correcto;
+
 		try {
 			conexionMySQL = new GestionesMySQL();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
 		do {
-			menu = 0;
-			System.out.println("A que hospital se desa conectar:\n" + "1.Hospital MySQL\n" + "2.Hospital SQLite\n"
-					+ "3.Hospital cualtoque\n" + "4.Salir");
-			menu = in.nextInt();
+			do {
+				try {
+					menu = 0;
+					System.out.println("A que hospital se desa conectar:\n" + "1.Hospital MySQL\n"
+							+ "2.Hospital SQLite\n" + "3.Hospital cualtoque\n" + "4.Salir");
+					menu = Integer.parseInt(in.nextLine());
+					correcto = true;
+				} catch (Exception e) {
+					System.out.println("Debe seleccionar numericamente el hospital");
+					correcto = false;
+				}
+			} while (!correcto);
 			switch (menu) {
 			case 1:
 				conexionMySQL.menuPrincipal();
