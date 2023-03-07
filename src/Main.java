@@ -26,7 +26,7 @@ public class Main {
 				try {
 					menu = 0;
 					System.out.println("A que hospital se desa conectar:\n" + "1.Hospital MySQL\n"
-							+ "2.Hospital SQLite\n" + "3.Hospital cualtoque\n" + "4.Salir");
+							+ "2.Hospital SQLite\n" + "3.Hospital H2\n" + "4.Salir");
 					menu = Integer.parseInt(in.nextLine());
 					correcto = true;
 				} catch (Exception e) {
