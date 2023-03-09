@@ -1,5 +1,5 @@
-Create TABLE `paciente` (
-  `idPaciente` int NOT NULL AUTO_INCREMENT,
+Create TABLE paciente (
+  `idPaciente` INTEGER NOT NULL ,
   `dni` varchar(45) NOT NULL,
   `nombre` varchar(45) NOT NULL,
   `apellidos` varchar(45) NOT NULL,
@@ -7,11 +7,11 @@ Create TABLE `paciente` (
   `edad` int NOT NULL,
   `profesion` varchar(45) NOT NULL,
   `baja` tinyint NOT NULL,
-  PRIMARY KEY (`idPaciente`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`idPaciente` AUTOINCREMENT)
+);
 
 CREATE TABLE `medico` (
-  `idmedico` int NOT NULL AUTO_INCREMENT,
+  `idmedico` INTEGER NOT NULL ,
   `numColegiado` varchar(45) NOT NULL,
   `dni` varchar(45) NOT NULL,
   `nombre` varchar(45) NOT NULL,
@@ -20,20 +20,20 @@ CREATE TABLE `medico` (
   `fechaContratacion` date NOT NULL,
   `especialidad` varchar(45) NOT NULL,
   `baja` tinyint NOT NULL,
-  PRIMARY KEY (`idmedico`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`idmedico` AUTOINCREMENT)
+);
 
 CREATE TABLE `hospital` (
-  `idhospital` int NOT NULL AUTO_INCREMENT,
+  `idhospital` INTEGER NOT NULL ,
   `nombre` varchar(45) NOT NULL,
   `direccion` varchar(45) NOT NULL,
   `telefono` int NOT NULL,
   `fechaApertura` date NOT NULL,
-  PRIMARY KEY (`idhospital`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`idhospital` AUTOINCREMENT)
+);
 
 CREATE TABLE `consulta` (
-  `idconsulta` int NOT NULL AUTO_INCREMENT,
+  `idconsulta` INTEGER NOT NULL ,
   `sala` int NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
@@ -43,11 +43,9 @@ CREATE TABLE `consulta` (
   `analisisComplementarios` varchar(45) NOT NULL,
   `realizada` tinyint NOT NULL,
   `medicamentos` varchar(45) NOT NULL,
-  PRIMARY KEY (`idconsulta`),
-  KEY `medico_fk_Medico_idx` (`medicoInterviniente`),
-  KEY `paciente_fk_Paciente_idx` (`paciente`),
+  PRIMARY KEY (`idconsulta` AUTOINCREMENT),
   CONSTRAINT `medico_fk_Medico` FOREIGN KEY (`medicoInterviniente`) REFERENCES `medico` (`idmedico`) ON DELETE CASCADE,
   CONSTRAINT `paciente_fk_Paciente` FOREIGN KEY (`paciente`) REFERENCES `paciente` (`idPaciente`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 

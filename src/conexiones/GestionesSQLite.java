@@ -1,15 +1,22 @@
 package conexiones;
 
-import clases.*;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-public class GestionesMySQL {
+import clases.consulta;
+import clases.medico;
+import clases.paciente;
+
+public class GestionesSQLite {
 
 	public ArrayList<paciente> aPaciente;
 	public ArrayList<medico> aMedico;
@@ -73,7 +80,6 @@ public class GestionesMySQL {
 			}
 
 		} while (menu != 9);
-
 	}
 
 	private void menuListadoPacientes() throws SQLException {
@@ -186,25 +192,28 @@ public class GestionesMySQL {
 	}
 
 	private void listadoPacientesCompleto() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
+
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = false");
+		ResultSet miResultSet = miSentencia.executeQuery("select * from paciente where baja = 0");
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", dni: " + miResultSet.getString(2) + ", nombre: "
 					+ miResultSet.getString(3) + ", apellidos : " + miResultSet.getString(4) + ", direccion: "
 					+ miResultSet.getString(5) + ", profesion: " + miResultSet.getString(6) + ", edad: "
 					+ miResultSet.getString(7));
 		}
+
 		miConexion.close();
+
 	}
 
 	private void listadoPacientesReducido() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = 0");
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(3));
 		}
@@ -213,19 +222,21 @@ public class GestionesMySQL {
 	}
 
 	private void listadoPacientesSinCitaCompletada() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
+
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery(
-				"SELECT p.dni, p.nombre FROM recuperacionad.paciente p , recuperacionad.consulta c where p.baja = false and  c.realizada=false");
+				"SELECT p.dni, p.nombre FROM paciente p , consulta c where p.baja = 0 and  c.realizada=0");
 		while (miResultSet.next()) {
 			System.out.println("dni: " + miResultSet.getString(1) + ", nombre: " + miResultSet.getString(2));
 		}
+
 		miConexion.close();
 	}
 
 	private void listadoHistoricoPacientes() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int id = 0;
 		boolean correcto;
@@ -251,8 +262,7 @@ public class GestionesMySQL {
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery(
-				"SELECT c.* FROM recuperacionad.paciente p , recuperacionad.consulta c where p.baja = false and c.realizada=true and p.idPaciente = "
-						+ id);
+				"SELECT c.* FROM paciente p , consulta c where p.baja = 0 and c.realizada= 1 and p.idPaciente = " + id);
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", sala: " + miResultSet.getInt(2) + ", fecha: "
 					+ miResultSet.getString(3) + ", hora: " + miResultSet.getString(4) + ", id Medico: "
@@ -260,15 +270,15 @@ public class GestionesMySQL {
 					+ miResultSet.getString(10) + ", coste: " + miResultSet.getDouble(7)
 					+ ", analisis complementarios: " + miResultSet.getString(8));
 		}
-		
 		miConexion.close();
 	}
 
 	private void listadoMedicosCompleto() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
+
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = 0");
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", numColegiado: " + miResultSet.getString(2)
 					+ ", nombre: " + miResultSet.getString(3) + ", apellidos: " + miResultSet.getString(4)
@@ -279,19 +289,20 @@ public class GestionesMySQL {
 	}
 
 	private void listadoMedicosReducido() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = 0");
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(3));
 		}
+
 		miConexion.close();
 	}
 
 	private void listadoConsultasPacientesPorMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int id = 0;
 		boolean correcto;
@@ -315,7 +326,7 @@ public class GestionesMySQL {
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery(
-				"SELECT c.* FROM recuperacionad.paciente p , recuperacionad.consulta c where p.baja = false and c.realizada=true and p.idPaciente = "
+				"SELECT c.* FROM paciente p , consulta c where p.baja = 0 and c.realizada = 1 and p.idPaciente = "
 						+ id);
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", sala: " + miResultSet.getInt(2) + ", fecha: "
@@ -328,10 +339,10 @@ public class GestionesMySQL {
 	}
 
 	private void listadoConsultasCompleto() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = 0");
 		while (miResultSet.next()) {
 			System.out.println("id: " + miResultSet.getInt(1) + ", sala: " + miResultSet.getInt(2) + ", fecha: "
 					+ miResultSet.getString(3) + ", hora: " + miResultSet.getString(4) + ", id Medico: "
@@ -343,7 +354,7 @@ public class GestionesMySQL {
 	}
 
 	private void listadoConsultasFecha() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		String fecha = "";
 		Date fechaConsulta = null;
@@ -365,7 +376,7 @@ public class GestionesMySQL {
 
 		try {
 			ResultSet miResultSet = miSentencia
-					.executeQuery("SELECT * FROM consulta where fecha = '" + fechaConsulta + "' and realizada = false");
+					.executeQuery("SELECT * FROM consulta where fecha = '" + fechaConsulta + "' and realizada = 0");
 			while (miResultSet.next()) {
 				System.out.println("id: " + miResultSet.getInt(1) + ", sala: " + miResultSet.getInt(2) + ", fecha: "
 						+ miResultSet.getString(3) + ", hora: " + miResultSet.getString(4) + ", id Medico: "
@@ -376,12 +387,11 @@ public class GestionesMySQL {
 		} catch (Exception e) {
 			System.out.println("Ninguna consulta con esa fecha relazionada");
 		}
-		
 		miConexion.close();
 	}
 
 	private void listadoConsultasHora() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		String hora = "";
 		Time horaConsulta = null;
@@ -402,7 +412,7 @@ public class GestionesMySQL {
 		Statement miSentencia = miConexion.createStatement();
 		try {
 			ResultSet miResultSet = miSentencia
-					.executeQuery("SELECT * FROM consulta where hora = '" + horaConsulta + "' and realizada = false");
+					.executeQuery("SELECT * FROM consulta where hora = '" + horaConsulta + "' and realizada = 0");
 			while (miResultSet.next()) {
 				System.out.println("id: " + miResultSet.getInt(1) + ", sala: " + miResultSet.getInt(2) + ", fecha: "
 						+ miResultSet.getString(3) + ", hora: " + miResultSet.getString(4) + ", id Medico: "
@@ -417,7 +427,7 @@ public class GestionesMySQL {
 	}
 
 	private void listadoConsultasSala() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int sala = 0;
 		boolean correcto;
@@ -437,7 +447,7 @@ public class GestionesMySQL {
 		Statement miSentencia = miConexion.createStatement();
 		try {
 			ResultSet miResultSet = miSentencia
-					.executeQuery("SELECT * FROM consulta where sala = " + sala + " and realizada = false");
+					.executeQuery("SELECT * FROM consulta where sala = " + sala + " and realizada = 0");
 			while (miResultSet.next()) {
 				System.out.println("id: " + miResultSet.getInt(1) + ", sala: " + miResultSet.getInt(2) + ", fecha: "
 						+ miResultSet.getString(3) + ", hora: " + miResultSet.getString(4) + ", id Medico: "
@@ -449,7 +459,6 @@ public class GestionesMySQL {
 			System.out.println("No hay ninguna consulta asociada a esa sala");
 		}
 		miConexion.close();
-
 	}
 
 	private void crudPacientes() throws SQLException {
@@ -490,7 +499,7 @@ public class GestionesMySQL {
 	}
 
 	private void crearPaciente() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", profesion = "";
 		int edad = 0;
@@ -523,10 +532,10 @@ public class GestionesMySQL {
 
 		String sql = String.format("INSERT INTO paciente(dni,nombre,apellidos,direccion,edad,profesion,baja) VALUES('"
 				+ pa.getDni() + "','" + pa.getNombre() + "','" + pa.getApellidos() + "','" + pa.getDireccion() + "',"
-				+ pa.getEdad() + ",'" + pa.getDireccion() + "'," + pa.isBaja() + ")");
+				+ pa.getEdad() + ",'" + pa.getDireccion() + "', 0 )");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aPaciente.clear();
@@ -535,7 +544,7 @@ public class GestionesMySQL {
 	}
 
 	private void modificarPaciente() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", profesion = "";
 		int edad = 0, menu = 0;
@@ -586,7 +595,7 @@ public class GestionesMySQL {
 				+ "`profesion` = '" + profesion + "' WHERE `idPaciente` = " + menu + ";");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aPaciente.clear();
@@ -594,7 +603,7 @@ public class GestionesMySQL {
 	}
 
 	private void eliminarPaciente() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int menu = 0;
 		boolean correcto;
@@ -618,10 +627,10 @@ public class GestionesMySQL {
 
 		Statement miSentencia = miConexion.createStatement();
 
-		String sql = String.format("UPDATE paciente SET baja=true WHERE `idPaciente` = " + menu + ";");
+		String sql = String.format("UPDATE paciente SET baja= 1 WHERE `idPaciente` = " + menu + ";");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aPaciente.clear();
@@ -666,7 +675,7 @@ public class GestionesMySQL {
 	}
 
 	private void crearMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", especialidad = "", fecha = "";
 		Date fechaNaci = null, fechaContrata = null;
@@ -720,10 +729,10 @@ public class GestionesMySQL {
 				"INSERT INTO medico(numColegiado,dni,nombre,apellidos,fechaNaci,fechaContratacion,especialidad,baja) "
 						+ "VALUES(" + med.getNumColegiado() + ",'" + med.getDni() + "','" + med.getNombre() + "','"
 						+ med.getApellidos() + "','" + med.getFecahNaci() + "','" + med.getFechaContrata() + "','"
-						+ med.getEspecialidad() + "'," + med.isBaja() + ")");
+						+ med.getEspecialidad() + "', 0 )");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aMedico.clear();
@@ -732,7 +741,7 @@ public class GestionesMySQL {
 	}
 
 	private void modificarMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", especialidad = "", fecha = "";
 		Date fechaNaci = null, fechaContrata = null;
@@ -804,7 +813,7 @@ public class GestionesMySQL {
 				+ "' where idmedico = " + menu + "");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aMedico.clear();
@@ -812,7 +821,7 @@ public class GestionesMySQL {
 	}
 
 	private void eliminarMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int menu = 0;
 		boolean correcto;
@@ -836,14 +845,15 @@ public class GestionesMySQL {
 
 		Statement miSentencia = miConexion.createStatement();
 
-		String sql = String.format("UPDATE medico SET baja=true WHERE `idmedico` = " + menu + ";");
+		String sql = String.format("UPDATE medico SET baja=1 WHERE `idmedico` = " + menu + ";");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aMedico.clear();
 		guardarMedicos(aMedico);
+
 	}
 
 	private void crudConsultas() throws SQLException {
@@ -884,7 +894,7 @@ public class GestionesMySQL {
 	}
 
 	private void crearConsulta() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int sala = 0, idMedico = 0, idPaciente = 0, menu = 0;
 		Double coste = 0.0;
@@ -981,10 +991,10 @@ public class GestionesMySQL {
 				"INSERT INTO consulta (sala,fecha,hora,medicoInterviniente,paciente,coste,analisisComplementarios,realizada,medicamentos) VALUES ("
 						+ cont.getSala() + ",'" + cont.getFecha() + "','" + cont.getHora() + "'," + cont.getIdMedico()
 						+ "," + cont.getIdPaciente() + "," + cont.getCoste() + ",'" + cont.getAnalisisComplement()
-						+ "'," + cont.isRealizada() + ",'" + cont.getMedicamentos() + "')");
+						+ "', 0 ,'" + cont.getMedicamentos() + "')");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aConsulta.clear();
@@ -993,7 +1003,7 @@ public class GestionesMySQL {
 	}
 
 	private void modificarConsulta() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int sala = 0, idMedico = 0, idPaciente = 0, menu = 0;
 		Double coste = 0.0;
@@ -1098,7 +1108,7 @@ public class GestionesMySQL {
 				+ "' where idconsulta = " + menu + "");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aConsulta.clear();
@@ -1107,7 +1117,7 @@ public class GestionesMySQL {
 	}
 
 	private void eliminarConsulta() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Scanner in = new Scanner(System.in);
 		int menu = 0;
 		boolean correcto;
@@ -1130,10 +1140,9 @@ public class GestionesMySQL {
 		} while (!correcto);
 		Statement miSentencia = miConexion.createStatement();
 
-		String sql = String.format("UPDATE consulta SET realizada = true where idconsulta = " + menu + "");
+		String sql = String.format("UPDATE consulta SET realizada = 1 where idconsulta = " + menu + "");
 
 		miSentencia.execute(sql);
-		
 		miConexion.close();
 
 		aConsulta.clear();
@@ -1185,10 +1194,10 @@ public class GestionesMySQL {
 	}
 
 	public void guardarPacientes(ArrayList<paciente> aPaciente) throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = 0");
 		while (miResultSet.next()) {
 			paciente p = new paciente(miResultSet.getInt(1), miResultSet.getString(2), miResultSet.getString(3),
 					miResultSet.getString(4), miResultSet.getString(5), miResultSet.getInt(6), miResultSet.getString(7),
@@ -1196,13 +1205,14 @@ public class GestionesMySQL {
 			aPaciente.add(p);
 		}
 		miConexion.close();
+
 	}
 
 	public void guardarMedicos(ArrayList<medico> aMedicos) throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = 0");
 		while (miResultSet.next()) {
 			medico m = new medico(miResultSet.getInt(1), miResultSet.getInt(2), miResultSet.getString(3),
 					miResultSet.getString(4), miResultSet.getString(5), miResultSet.getDate(6), miResultSet.getDate(7),
@@ -1210,13 +1220,14 @@ public class GestionesMySQL {
 			aMedicos.add(m);
 		}
 		miConexion.close();
+
 	}
 
 	public void guardarConsultas(ArrayList<consulta> aConsultas) throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		Statement miSentencia = miConexion.createStatement();
 
-		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = false");
+		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = 0");
 		while (miResultSet.next()) {
 			consulta c = new consulta(miResultSet.getInt(1), miResultSet.getInt(2), miResultSet.getDate(3),
 					miResultSet.getTime(4), miResultSet.getInt(5), miResultSet.getInt(6), miResultSet.getString(10),
@@ -1258,7 +1269,7 @@ public class GestionesMySQL {
 	}
 
 	private void listarMetadatos() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDSQLite().conectorSQLite();
 		try {
 			// Obtención de metadatos
 			DatabaseMetaData datosBBDD = miConexion.getMetaData();
@@ -1306,6 +1317,6 @@ public class GestionesMySQL {
 			throwables.printStackTrace();
 		}
 		miConexion.close();
-	}
 
+	}
 }

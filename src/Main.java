@@ -8,6 +8,7 @@ import conexiones.*;
 
 public class Main {
 	static GestionesMySQL conexionMySQL;
+	static GestionesSQLite conexionSQLite;
 	static int menu;
 
 	public static void main(String[] args) throws SQLException {
@@ -16,6 +17,7 @@ public class Main {
 
 		try {
 			conexionMySQL = new GestionesMySQL();
+			conexionSQLite = new GestionesSQLite();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,6 +41,7 @@ public class Main {
 				conexionMySQL.menuPrincipal();
 				break;
 			case 2:
+				conexionSQLite.menuPrincipal();
 				break;
 			case 3:
 				break;
