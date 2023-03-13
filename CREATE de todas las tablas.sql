@@ -8,7 +8,7 @@ Create TABLE `paciente` (
   `profesion` varchar(45) NOT NULL,
   `baja` tinyint NOT NULL,
   PRIMARY KEY (`idPaciente`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+)
 
 CREATE TABLE `medico` (
   `idmedico` int NOT NULL AUTO_INCREMENT,
@@ -21,7 +21,7 @@ CREATE TABLE `medico` (
   `especialidad` varchar(45) NOT NULL,
   `baja` tinyint NOT NULL,
   PRIMARY KEY (`idmedico`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) 
 
 CREATE TABLE `hospital` (
   `idhospital` int NOT NULL AUTO_INCREMENT,
@@ -30,7 +30,7 @@ CREATE TABLE `hospital` (
   `telefono` int NOT NULL,
   `fechaApertura` date NOT NULL,
   PRIMARY KEY (`idhospital`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+)
 
 CREATE TABLE `consulta` (
   `idconsulta` int NOT NULL AUTO_INCREMENT,
@@ -48,6 +48,6 @@ CREATE TABLE `consulta` (
   KEY `paciente_fk_Paciente_idx` (`paciente`),
   CONSTRAINT `medico_fk_Medico` FOREIGN KEY (`medicoInterviniente`) REFERENCES `medico` (`idmedico`) ON DELETE CASCADE,
   CONSTRAINT `paciente_fk_Paciente` FOREIGN KEY (`paciente`) REFERENCES `paciente` (`idPaciente`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+)
 
 
