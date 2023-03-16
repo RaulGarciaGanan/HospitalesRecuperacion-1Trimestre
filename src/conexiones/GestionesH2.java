@@ -32,7 +32,7 @@ public class GestionesH2 {
 					System.out.println("Elije una opcion:\n" + "1.Menu de listado de Pacientes\n"
 							+ "2.Menu de Listado de Medicos\n" + "3.Menu de listado de Consultas\n"
 							+ "4.Gestion Pacientes\n" + "5.Gestion Medicos\n" + "6.Gestion Consultas\n"
-							+ "7.MetaDatos\n" + "8.Datos del hospital\n" + "9.salir");
+							+ "7.MetaDatos\n" + "8.Menu del  hospital\n" + "9.salir");
 					menu = Integer.parseInt(in.nextLine());
 					correcto = true;
 				} catch (Exception e) {
@@ -63,7 +63,7 @@ public class GestionesH2 {
 				listarMetadatos();
 				break;
 			case 8:
-				datosHospital();
+				menuHospital();
 				break;
 			case 9:
 				System.out.println("Agur");
@@ -184,6 +184,38 @@ public class GestionesH2 {
 		} while (menu != 5);
 
 	}
+	
+	private void menuHospital() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		boolean correcto;
+		int menu = 0;
+		do {
+			do {
+				try {
+					menu = 0;
+					System.out.println("Elije una opcion:\n" + "1.Introducir datos del hospital\n"
+							+ "2.modificar datos del hospital\n" + "3.salir");
+					menu = Integer.parseInt(in.nextLine());
+					correcto = true;
+				} catch (Exception e) {
+					System.out.println("Debe seleccionar numericamente la opcion");
+					correcto = false;
+				}
+			} while (!correcto);
+			switch (menu) {
+			case 1:
+				introducirDatosHospital();;
+				break;
+			case 2:
+				modificarDatosHospital();;
+				break;
+			case 3:
+				System.out.println("Agur");
+			default:
+				break;
+			}
+		} while (menu != 3);
+	}
 
 	private void listadoPacientesCompleto() throws SQLException {
 		Connection miConexion = new ConexionBBDDH2().conectorH2();
@@ -200,7 +232,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoPacientesReducido() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 
 		Statement miSentencia = miConexion.createStatement();
 
@@ -213,7 +245,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoPacientesSinCitaCompletada() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery(
@@ -225,7 +257,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoHistoricoPacientes() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int id = 0;
 		boolean correcto;
@@ -265,7 +297,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoMedicosCompleto() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = 0");
@@ -279,19 +311,19 @@ public class GestionesH2 {
 	}
 
 	private void listadoMedicosReducido() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = 0");
 		while (miResultSet.next()) {
-			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(3));
+			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(4));
 		}
 		miConexion.close();
 	}
 
 	private void listadoConsultasPacientesPorMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int id = 0;
 		boolean correcto;
@@ -328,7 +360,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoConsultasCompleto() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = 0");
@@ -343,7 +375,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoConsultasFecha() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		String fecha = "";
 		Date fechaConsulta = null;
@@ -381,7 +413,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoConsultasHora() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		String hora = "";
 		Time horaConsulta = null;
@@ -417,7 +449,7 @@ public class GestionesH2 {
 	}
 
 	private void listadoConsultasSala() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int sala = 0;
 		boolean correcto;
@@ -490,7 +522,7 @@ public class GestionesH2 {
 	}
 
 	private void crearPaciente() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", profesion = "";
 		int edad = 0;
@@ -535,7 +567,7 @@ public class GestionesH2 {
 	}
 
 	private void modificarPaciente() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", profesion = "";
 		int edad = 0, menu = 0;
@@ -594,7 +626,7 @@ public class GestionesH2 {
 	}
 
 	private void eliminarPaciente() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int menu = 0;
 		boolean correcto;
@@ -666,7 +698,7 @@ public class GestionesH2 {
 	}
 
 	private void crearMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", especialidad = "", fecha = "";
 		Date fechaNaci = null, fechaContrata = null;
@@ -732,7 +764,7 @@ public class GestionesH2 {
 	}
 
 	private void modificarMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		String dni = "", nombre = "", apellidos = "", direccion = "", especialidad = "", fecha = "";
 		Date fechaNaci = null, fechaContrata = null;
@@ -812,7 +844,7 @@ public class GestionesH2 {
 	}
 
 	private void eliminarMedico() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int menu = 0;
 		boolean correcto;
@@ -884,7 +916,7 @@ public class GestionesH2 {
 	}
 
 	private void crearConsulta() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int sala = 0, idMedico = 0, idPaciente = 0, menu = 0;
 		Double coste = 0.0;
@@ -993,7 +1025,7 @@ public class GestionesH2 {
 	}
 
 	private void modificarConsulta() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int sala = 0, idMedico = 0, idPaciente = 0, menu = 0;
 		Double coste = 0.0;
@@ -1107,7 +1139,7 @@ public class GestionesH2 {
 	}
 
 	private void eliminarConsulta() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Scanner in = new Scanner(System.in);
 		int menu = 0;
 		boolean correcto;
@@ -1147,9 +1179,7 @@ public class GestionesH2 {
 		try {
 			date = sdf1.parse(fecha);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			System.out.println("Fecha mal introducida");
-
 		}
 		java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
 		return sqlStartDate;
@@ -1162,7 +1192,6 @@ public class GestionesH2 {
 		try {
 			time = sdf1.parse(hora);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			System.out.println("Fecha mal introducida");
 
 		}
@@ -1185,7 +1214,7 @@ public class GestionesH2 {
 	}
 
 	public void guardarPacientes(ArrayList<paciente> aPaciente) throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM paciente where baja = 0");
@@ -1199,7 +1228,7 @@ public class GestionesH2 {
 	}
 
 	public void guardarMedicos(ArrayList<medico> aMedicos) throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = 0");
@@ -1213,7 +1242,7 @@ public class GestionesH2 {
 	}
 
 	public void guardarConsultas(ArrayList<consulta> aConsultas) throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		Statement miSentencia = miConexion.createStatement();
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM consulta where realizada = 0");
@@ -1253,12 +1282,99 @@ public class GestionesH2 {
 		return false;
 	}
 
-	private void datosHospital() {
+	private void introducirDatosHospital() throws SQLException {
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
+		Scanner in = new Scanner(System.in);
+		int telefono = 0;
+		String nombre = "", direccion = "", fecha = "";
+		Date fechaApertura = null;
+		Boolean correcto;
 
+		System.out.println("Introduce el nombre del hospital:");
+		nombre = in.nextLine();
+		System.out.println("Introduce la direccion del hospital:");
+		direccion = in.nextLine();
+		do {
+			try {
+				telefono = 0;
+				System.out.println("Introduce el telefono del hospital:");
+				telefono = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("El telefono debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha en la que se creo el hospital (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaApertura = comprobarFecha(fecha);
+				System.out.println(fechaApertura);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("INSERT INTO hospital (nombre,direccion,telefono,fechaApertura) VALUES ('" + nombre
+				+ "','" + direccion + "'," + telefono + "," + fechaApertura + "')");
+
+		miSentencia.execute(sql);
+
+		miConexion.close();
+	}
+
+	private void modificarDatosHospital() throws SQLException {
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
+		Scanner in = new Scanner(System.in);
+		int telefono = 0;
+		String nombre = "", direccion = "", fecha = "";
+		Date fechaApertura = null;
+		Boolean correcto;
+
+		System.out.println("Introduce el nombre del hospital:");
+		nombre = in.nextLine();
+		System.out.println("Introduce la direccion del hospital:");
+		direccion = in.nextLine();
+		do {
+			try {
+				telefono = 0;
+				System.out.println("Introduce el telefono del hospital:");
+				telefono = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("El telefono debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha en la que se creo el hospital (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaApertura = comprobarFecha(fecha);
+				System.out.println(fechaApertura);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("UPDATE hospital SET " + "nombre = '" + nombre + "'," + "direccion = '" + direccion
+				+ "'," + "telefono = " + telefono + "," + "fechaApertura = '" + fechaApertura + "'"
+				+ "WHERE idhospital = 1;");
+
+		miSentencia.execute(sql);
+
+		miConexion.close();
 	}
 
 	private void listarMetadatos() throws SQLException {
-		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Connection miConexion = new ConexionBBDDH2().conectorH2();
 		try {
 			// Obtención de metadatos
 			DatabaseMetaData datosBBDD = miConexion.getMetaData();

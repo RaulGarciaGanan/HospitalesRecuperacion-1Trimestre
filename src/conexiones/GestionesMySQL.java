@@ -32,7 +32,7 @@ public class GestionesMySQL {
 					System.out.println("Elije una opcion:\n" + "1.Menu de listado de Pacientes\n"
 							+ "2.Menu de Listado de Medicos\n" + "3.Menu de listado de Consultas\n"
 							+ "4.Gestion Pacientes\n" + "5.Gestion Medicos\n" + "6.Gestion Consultas\n"
-							+ "7.MetaDatos\n" + "8.Datos del hospital\n" + "9.salir");
+							+ "7.MetaDatos\n" + "8.Menu del  hospital\n" + "9.salir");
 					menu = Integer.parseInt(in.nextLine());
 					correcto = true;
 				} catch (Exception e) {
@@ -63,7 +63,7 @@ public class GestionesMySQL {
 				listarMetadatos();
 				break;
 			case 8:
-				datosHospital();
+				menuHospital();
 				break;
 			case 9:
 				System.out.println("Agur");
@@ -185,6 +185,38 @@ public class GestionesMySQL {
 
 	}
 
+	private void menuHospital() throws SQLException {
+		Scanner in = new Scanner(System.in);
+		boolean correcto;
+		int menu = 0;
+		do {
+			do {
+				try {
+					menu = 0;
+					System.out.println("Elije una opcion:\n" + "1.Introducir datos del hospital\n"
+							+ "2.modificar datos del hospital\n" + "3.salir");
+					menu = Integer.parseInt(in.nextLine());
+					correcto = true;
+				} catch (Exception e) {
+					System.out.println("Debe seleccionar numericamente la opcion");
+					correcto = false;
+				}
+			} while (!correcto);
+			switch (menu) {
+			case 1:
+				introducirDatosHospital();;
+				break;
+			case 2:
+				modificarDatosHospital();;
+				break;
+			case 3:
+				System.out.println("Agur");
+			default:
+				break;
+			}
+		} while (menu != 3);
+	}
+
 	private void listadoPacientesCompleto() throws SQLException {
 		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
 		Statement miSentencia = miConexion.createStatement();
@@ -260,7 +292,7 @@ public class GestionesMySQL {
 					+ miResultSet.getString(10) + ", coste: " + miResultSet.getDouble(7)
 					+ ", analisis complementarios: " + miResultSet.getString(8));
 		}
-		
+
 		miConexion.close();
 	}
 
@@ -285,7 +317,7 @@ public class GestionesMySQL {
 
 		ResultSet miResultSet = miSentencia.executeQuery("SELECT * FROM medico where baja = false");
 		while (miResultSet.next()) {
-			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(3));
+			System.out.println("id: " + miResultSet.getInt(1) + ", nombre: " + miResultSet.getString(4));
 		}
 		miConexion.close();
 	}
@@ -376,7 +408,7 @@ public class GestionesMySQL {
 		} catch (Exception e) {
 			System.out.println("Ninguna consulta con esa fecha relazionada");
 		}
-		
+
 		miConexion.close();
 	}
 
@@ -526,7 +558,7 @@ public class GestionesMySQL {
 				+ pa.getEdad() + ",'" + pa.getDireccion() + "'," + pa.isBaja() + ")");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aPaciente.clear();
@@ -586,7 +618,7 @@ public class GestionesMySQL {
 				+ "`profesion` = '" + profesion + "' WHERE `idPaciente` = " + menu + ";");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aPaciente.clear();
@@ -621,7 +653,7 @@ public class GestionesMySQL {
 		String sql = String.format("UPDATE paciente SET baja=true WHERE `idPaciente` = " + menu + ";");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aPaciente.clear();
@@ -723,7 +755,7 @@ public class GestionesMySQL {
 						+ med.getEspecialidad() + "'," + med.isBaja() + ")");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aMedico.clear();
@@ -804,7 +836,7 @@ public class GestionesMySQL {
 				+ "' where idmedico = " + menu + "");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aMedico.clear();
@@ -839,7 +871,7 @@ public class GestionesMySQL {
 		String sql = String.format("UPDATE medico SET baja=true WHERE `idmedico` = " + menu + ";");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aMedico.clear();
@@ -984,7 +1016,7 @@ public class GestionesMySQL {
 						+ "'," + cont.isRealizada() + ",'" + cont.getMedicamentos() + "')");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aConsulta.clear();
@@ -1098,7 +1130,7 @@ public class GestionesMySQL {
 				+ "' where idconsulta = " + menu + "");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aConsulta.clear();
@@ -1133,7 +1165,7 @@ public class GestionesMySQL {
 		String sql = String.format("UPDATE consulta SET realizada = true where idconsulta = " + menu + "");
 
 		miSentencia.execute(sql);
-		
+
 		miConexion.close();
 
 		aConsulta.clear();
@@ -1253,8 +1285,95 @@ public class GestionesMySQL {
 		return false;
 	}
 
-	private void datosHospital() {
+	private void introducirDatosHospital() throws SQLException {
+		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Scanner in = new Scanner(System.in);
+		int telefono = 0;
+		String nombre = "", direccion = "", fecha = "";
+		Date fechaApertura = null;
+		Boolean correcto;
 
+		System.out.println("Introduce el nombre del hospital:");
+		nombre = in.nextLine();
+		System.out.println("Introduce la direccion del hospital:");
+		direccion = in.nextLine();
+		do {
+			try {
+				telefono = 0;
+				System.out.println("Introduce el telefono del hospital:");
+				telefono = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("El telefono debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha en la que se creo el hospital (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaApertura = comprobarFecha(fecha);
+				System.out.println(fechaApertura);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("INSERT INTO hospital (nombre,direccion,telefono,fechaApertura) VALUES ('" + nombre
+				+ "','" + direccion + "'," + telefono + ",'" + fechaApertura + "')");
+
+		miSentencia.execute(sql);
+
+		miConexion.close();
+	}
+
+	private void modificarDatosHospital() throws SQLException {
+		Connection miConexion = new ConexionBBDDMYSQL().conectorMySQL();
+		Scanner in = new Scanner(System.in);
+		int telefono = 0;
+		String nombre = "", direccion = "", fecha = "";
+		Date fechaApertura = null;
+		Boolean correcto;
+
+		System.out.println("Introduce el nombre del hospital:");
+		nombre = in.nextLine();
+		System.out.println("Introduce la direccion del hospital:");
+		direccion = in.nextLine();
+		do {
+			try {
+				telefono = 0;
+				System.out.println("Introduce el telefono del hospital:");
+				telefono = Integer.parseInt(in.nextLine());
+				correcto = true;
+			} catch (Exception e) {
+				System.out.println("El telefono debe ser numerico");
+				correcto = false;
+			}
+		} while (!correcto);
+		do {
+			System.out.println("Introduce la fecha en la que se creo el hospital (con este formato: yyyy-mm-dd):");
+			fecha = in.nextLine();
+			try {
+				fechaApertura = comprobarFecha(fecha);
+				System.out.println(fechaApertura);
+				correcto = true;
+			} catch (Exception e) {
+				correcto = false;
+			}
+		} while (!correcto);
+
+		Statement miSentencia = miConexion.createStatement();
+
+		String sql = String.format("UPDATE hospital SET " + "nombre = '" + nombre + "'," + "direccion = '" + direccion
+				+ "'," + "telefono = " + telefono + "," + "fechaApertura = '" + fechaApertura + "'"
+				+ "WHERE idhospital = 1;");
+
+		miSentencia.execute(sql);
+
+		miConexion.close();
 	}
 
 	private void listarMetadatos() throws SQLException {
