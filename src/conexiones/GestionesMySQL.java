@@ -1384,9 +1384,7 @@ public class GestionesMySQL {
 
 			// Mostramos información de la BBDD
 			System.out.println("Gestor de BBDD: " + datosBBDD.getDatabaseProductName());
-			System.out.println("Versión del Gestor: " + datosBBDD.getDatabaseProductVersion());
 			System.out.println("Nombre del driver: " + datosBBDD.getDriverName());
-			System.out.println("Versión del driver: " + datosBBDD.getDriverVersion());
 			System.out.println("URL de la BBDD: " + datosBBDD.getURL());
 			System.out.println("Nombre del usuario: " + datosBBDD.getUserName());
 

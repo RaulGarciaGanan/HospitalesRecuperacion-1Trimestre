@@ -1395,43 +1395,10 @@ public class GestionesSQLite {
 
 			// Mostramos información de la BBDD
 			System.out.println("Gestor de BBDD: " + datosBBDD.getDatabaseProductName());
-			System.out.println("Versión del Gestor: " + datosBBDD.getDatabaseProductVersion());
 			System.out.println("Nombre del driver: " + datosBBDD.getDriverName());
-			System.out.println("Versión del driver: " + datosBBDD.getDriverVersion());
 			System.out.println("URL de la BBDD: " + datosBBDD.getURL());
 			System.out.println("Nombre del usuario: " + datosBBDD.getUserName());
 
-			// Mostramos información de las tablas, columnas, ...
-
-			ResultSet miMetaResult = datosBBDD.getTables("ejemplo", null, null, new String[] { "table" });
-
-			// ResultSet miMetaResult = datosBBDD.getTables(null,null,"empl%",null);
-			System.out.println("\n----Lista de tablas----");
-			while (miMetaResult.next()) {
-				System.out.println("\nNombre de tabla: " + miMetaResult.getString("TABLE_NAME") + " - Esquema: "
-						+ miMetaResult.getString(2));
-
-				ResultSet columnsResult = datosBBDD.getColumns(null, null, miMetaResult.getString(3), null);
-				while (columnsResult.next()) {
-					System.out.format("\tColumna: %-15s  Tipo de dato: %7s   Nullable: %1s\n",
-							columnsResult.getString(4), columnsResult.getString("TYPE_NAME"),
-							columnsResult.getInt("NULLABLE"));
-				}
-
-				ResultSet primaryResult = datosBBDD.getPrimaryKeys(null, null, miMetaResult.getString(3));
-				while (primaryResult.next()) {
-					System.out.println("Clave primaria: " + primaryResult.getObject(4).toString());
-				}
-
-			}
-
-			miMetaResult = datosBBDD.getColumns(null, null, "EMP%", null);
-			// miMetaResult = datosBBDD.getColumns(null,null,"empl%",null);
-			System.out.println("\n----Lista de columnas----");
-			while (miMetaResult.next()) {
-				System.out.println(miMetaResult.getString(4));
-
-			}
 		} catch (SQLException throwables) {
 			throwables.printStackTrace();
 		}
